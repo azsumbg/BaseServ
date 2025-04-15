@@ -97,15 +97,37 @@ namespace dll
 		{
 			*m_ptr = element;
 		}
+		size_t back() const
+		{
+			return m_pos;
+		}
 
 		size_t size() const
 		{
 			return m_size;
 		}
 
-		FPOINT sort(T& cont)
+		void sort(BAG& cont,FPOINT targ)
 		{
+			if (in_valid_state)
+			{
+				bool is_ok = false;
+				while (!is_ok)
+				{
+					is_ok = true;
 
+					for (size_t i = 0; i < m_pos - 1; ++i)
+					{
+						if (Distance((*(cont[i]))->center, targ) > Distance((*(cont[i + 1]))->center, targ))
+						{
+							T temp = *(cont[i]);
+							*(cont[i]) = *(cont[i + 1]);
+							is_ok = false;
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		T operator[](size_t index)
