@@ -118,10 +118,11 @@ namespace dll
 
 					for (size_t i = 0; i < m_pos - 1; ++i)
 					{
-						if (Distance((*(cont[i]))->center, targ) > Distance((*(cont[i + 1]))->center, targ))
+						if (Distance(**cont[i].center, targ) > Distance(**cont[i + 1].center, targ))
 						{
-							T temp = *(cont[i]);
-							*(cont[i]) = *(cont[i + 1]);
+							T temp = *cont[i];
+							*cont[i] = *cont[i + 1];
+							*cont[i + 1] = temp;
 							is_ok = false;
 							break;
 						}
@@ -183,31 +184,72 @@ namespace dll
 		int strenght{ 0 };
 		int attack_chance{ 0 };
 
+		bool hor_line{ false };
+		bool vert_line{ false };
+
+		float speed = 1.0f;
+
 		int frame{ 0 };
 		int max_frames{ 0 };
 		int frame_delay{ 0 };
 
-		void SetPath(float __to_x, float __to_y);
+		states state = states::stand;
+
+		RANDIT ChanceToHit{};
+
+		void SetPath(float __to_x, float __to_y)
+		{
+			move_sx = start.x;
+			move_sy = start.y;
+
+			move_ex = __to_x;
+			move_ey = __to_y;
+
+			hor_line = false;
+			vert_line = false;
+
+			if (move_sx == move_ex || (move_sx < move_ex && move_ex < end.x) || (move_sx > move_ex && move_ex > start.x - width))
+			{
+				vert_line = true;
+				return;
+			}
+			if (move_sy == move_ey || (move_sy < move_ey && move_ey < end.y) || (move_sy > move_ey && move_ey > start.y - height))
+			{
+				hor_line = true;
+				return;
+			}
+
+			slope = (move_ey - move_sy) / (move_ex - move_sx);
+			intercept = move_sy - move_sx * slope;
+		}
 
 	public:
 
 		unsigned char type = no_type;
 		dirs dir = dirs::stop;
-		states state = states::stand;
-
+		
 		int lifes{ 0 };
 
 		BASE(unsigned char _what_type, float _put_x, float _put_y);
 		virtual ~BASE() {};
 
-		int GetFrame() const;
-		int Attack();
+		int GetFrame();
+		int Attack()
+		{
+			int hit = 0;
+			if (ChanceToHit(0, attack_chance) == 1)hit = strenght;
+			return hit;
+		}
+		void ChangeState(states _to_what);
+		states GetState() const;
 
-		virtual void NextMove(BAG<FPOINT> _targets) = 0;
+		virtual void NextMove(BAG<FPOINT> _targets, FPOINT my_point) = 0;
 		virtual void Move(float _where_x, float _where_y) = 0;
 		virtual void Release() = 0;
-
-
 	};
+
+	typedef BASE* Creature;
+
+
 
 }
