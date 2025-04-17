@@ -171,6 +171,31 @@ dll::BASE::BASE(unsigned char _what_type, float _put_x, float _put_y)
 		break;
 	}
 }
+void dll::BASE::SetPath(float __to_x, float __to_y)
+{
+	move_sx = start.x;
+	move_sy = start.y;
+
+	move_ex = __to_x;
+	move_ey = __to_y;
+
+	hor_line = false;
+	vert_line = false;
+
+	if (move_sx == move_ex || (move_sx < move_ex && move_ex < end.x) || (move_sx > move_ex && move_ex > start.x - width))
+	{
+		vert_line = true;
+		return;
+	}
+	if (move_sy == move_ey || (move_sy < move_ey && move_ey < end.y) || (move_sy > move_ey && move_ey > start.y - height))
+	{
+		hor_line = true;
+		return;
+	}
+
+	slope = (move_ey - move_sy) / (move_ex - move_sx);
+	intercept = move_sy - move_sx * slope;
+}
 int dll::BASE::GetFrame()
 {
 	--frame_delay;
@@ -257,13 +282,19 @@ states dll::BASE::GetState() const
 {
 	return state;
 }
+int dll::BASE::Attack()
+{
+	int hit = 0;
+	if (ChanceToHit(0, attack_chance) == 1)hit = strenght;
+	return hit;
+}
 
 ///////////////////////////////////
 
 // HERO ***************************
 
 dll::HERO::HERO(float _where_x, float _where_y) :BASE(hero, _where_x, _where_y) {};
-void dll::HERO::NextMove(BAG<FPOINT> _targets)
+void dll::HERO::NextMove(BAG<FPOINT> _targets, float gear)
 {
 	return;
 }
@@ -325,9 +356,21 @@ void dll::HERO::Release()
 // EVILS **************************
 
 dll::EVILS::EVILS(unsigned char _what, float _where_x, float _where_y) :BASE(_what, _where_x, _where_y) {};
-void dll::EVILS::NextMove(BAG<FPOINT> _targets)
+void dll::EVILS::NextMove(BAG<FPOINT> _targets, float gear)
 {
+	sort(_targets, start);
+	
+	if (in_battle)
+	{
+		if (lifes < 50 && ChanceToHit(0, 20) == 9)
+		{
+			Move(end.x, (float)(ChanceToHit(50, 700)), gear);
+			return;
+		}
+		return;
+	}
 
+	Move(_targets[0].x, _targets[0].y, gear);
 }
 bool dll::EVILS::Move(float _where_x, float _where_y, float gear)
 {
@@ -383,6 +426,41 @@ void dll::EVILS::Release()
 }
 
 ///////////////////////////////////
+
+// FUNCTIONS *************************************
+
+float dll::Distance(FPOINT my_point, FPOINT target)
+{
+	float a = powf(abs(my_point.x - target.x), 2);
+	float b = powf(abs(my_point.y - target.y), 2);
+
+	return sqrt(a + b);
+}
+
+void dll::sort(BAG<FPOINT>& cont, FPOINT targ)
+{
+	if (cont.in_valid_state)
+	{
+		bool is_ok = false;
+		while (!is_ok)
+		{
+			is_ok = true;
+
+			for (size_t i = 0; i < cont.size() - 1; ++i)
+			{
+				if (Distance(cont[i], targ) > Distance(cont[i + 1], targ))
+				{
+					FPOINT big_value = cont[i];
+					FPOINT small_value = cont[i + 1];
+					cont(i, small_value);
+					cont(i + 1, big_value);
+					is_ok = false;
+					break;
+				}
+			}
+		}
+	}
+}
 
 // FACTORY ************************
 
