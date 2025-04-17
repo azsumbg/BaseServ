@@ -244,12 +244,26 @@ namespace dll
 		states GetState() const;
 
 		virtual void NextMove(BAG<FPOINT> _targets, FPOINT my_point) = 0;
-		virtual void Move(float _where_x, float _where_y) = 0;
+		virtual bool Move(float _where_x, float _where_y, float gear) = 0;
 		virtual void Release() = 0;
 	};
 
 	typedef BASE* Creature;
 
+	class BASE_API HERO :public BASE
+	{
+	private:
 
+		HERO(float _where_x, float _where_y);
 
+	public:
+
+		void NextMove(BAG<FPOINT> _targets, FPOINT my_point) override;
+		bool Move(float _where_x, float _where_y, float gear) override;
+		virtual void Release() override;
+
+		friend BASE_API Creature Factory(unsigned char which_creature, float first_x, float first_y);
+	};
+
+	BASE_API Creature Factory(unsigned char which_creature, float first_x, float first_y);
 }
