@@ -263,7 +263,7 @@ states dll::BASE::GetState() const
 // HERO ***************************
 
 dll::HERO::HERO(float _where_x, float _where_y) :BASE(hero, _where_x, _where_y) {};
-void dll::HERO::NextMove(BAG<FPOINT> _targets, FPOINT my_point)
+void dll::HERO::NextMove(BAG<FPOINT> _targets)
 {
 	return;
 }
@@ -321,3 +321,77 @@ void dll::HERO::Release()
 }
 
 ///////////////////////////////////
+
+// EVILS **************************
+
+dll::EVILS::EVILS(unsigned char _what, float _where_x, float _where_y) :BASE(_what, _where_x, _where_y) {};
+void dll::EVILS::NextMove(BAG<FPOINT> _targets)
+{
+
+}
+bool dll::EVILS::Move(float _where_x, float _where_y, float gear)
+{
+	float now_speed = speed + gear / 10;
+
+	SetPath(_where_x, _where_y);
+
+	if (hor_line)
+	{
+		if (move_sx < move_ex)
+		{
+			dir = dirs::right;
+			start.x += now_speed;
+		}
+		else if (move_sx > move_ex)
+		{
+			dir = dirs::left;
+			start.x -= now_speed;
+		}
+		SetEdges();
+		return true;
+	}
+	if (vert_line)
+	{
+		if (move_sy < move_ey)start.y += now_speed;
+		else if (move_sy > move_ey)start.y -= now_speed;
+		SetEdges();
+		return true;
+	}
+
+	if (move_sx < move_ex)
+	{
+		dir = dirs::right;
+		start.x += now_speed;
+		start.y = start.x * slope + intercept;
+		SetEdges();
+		return true;
+	}
+	else if (move_sx > move_ex)
+	{
+		dir = dirs::left;
+		start.x -= now_speed;
+		start.y = start.x * slope + intercept;
+		SetEdges();
+		return true;
+	}
+
+	return false;
+}
+void dll::EVILS::Release()
+{
+	delete this;
+}
+
+///////////////////////////////////
+
+// FACTORY ************************
+
+BASE_API dll::Creature dll::Factory(unsigned char which_creature, float first_x, float first_y)
+{
+	Creature ret = nullptr;
+
+	if (which_creature == hero)ret = new HERO(first_x, first_y);
+	else ret = new EVILS(which_creature, first_x, first_y);
+		
+	return ret;
+}
