@@ -245,7 +245,7 @@ int dll::BASE::GetFrame()
 			break;
 		}
 
-		--frame;
+		++frame;
 		if (frame > max_frames)frame = 0;
 	}
 
@@ -302,16 +302,18 @@ bool dll::HERO::Move(float _where_x, float _where_y, float gear)
 {
 	float now_speed = speed + gear / 10;
 
+	state = states::run;
+
 	SetPath(_where_x, _where_y);
 
 	if (hor_line)
 	{
-		if (move_sx < move_ex)
+		if (move_sx < move_ex && end.x + now_speed <= scr_width)
 		{
 			dir = dirs::right;
 			start.x += now_speed;
 		}
-		else if (move_sx > move_ex)
+		else if (move_sx > move_ex && start.x - now_speed >= 0)
 		{
 			dir = dirs::left;
 			start.x -= now_speed;
@@ -321,13 +323,13 @@ bool dll::HERO::Move(float _where_x, float _where_y, float gear)
 	}
 	if (vert_line)
 	{
-		if (move_sy < move_ey)start.y += now_speed;
-		else if (move_sy > move_ey)start.y -= now_speed;
+		if (move_sy < move_ey && end.y + now_speed <= ground)start.y += now_speed;
+		else if (move_sy > move_ey && start.y - now_speed >= up_ground_boundary)start.y -= now_speed;
 		SetEdges();
 		return true;
 	}
 
-	if (move_sx < move_ex)
+	if (move_sx < move_ex && end.x + now_speed <= scr_width)
 	{
 		dir = dirs::right;
 		start.x += now_speed;
@@ -335,7 +337,7 @@ bool dll::HERO::Move(float _where_x, float _where_y, float gear)
 		SetEdges();
 		return true;
 	}
-	else if (move_sx > move_ex)
+	else if (move_sx > move_ex && start.x - now_speed >= 0)
 	{
 		dir = dirs::left;
 		start.x -= now_speed;
@@ -344,6 +346,7 @@ bool dll::HERO::Move(float _where_x, float _where_y, float gear)
 		return true;
 	}
 
+	state = states::stand;
 	return false;
 }
 void dll::HERO::Release()
@@ -378,14 +381,16 @@ bool dll::EVILS::Move(float _where_x, float _where_y, float gear)
 
 	SetPath(_where_x, _where_y);
 
+	state = states::run;
+
 	if (hor_line)
 	{
-		if (move_sx < move_ex)
+		if (move_sx < move_ex && end.x + now_speed <= scr_width)
 		{
 			dir = dirs::right;
 			start.x += now_speed;
 		}
-		else if (move_sx > move_ex)
+		else if (move_sx > move_ex && start.x - now_speed >= 0)
 		{
 			dir = dirs::left;
 			start.x -= now_speed;
@@ -395,13 +400,13 @@ bool dll::EVILS::Move(float _where_x, float _where_y, float gear)
 	}
 	if (vert_line)
 	{
-		if (move_sy < move_ey)start.y += now_speed;
-		else if (move_sy > move_ey)start.y -= now_speed;
+		if (move_sy < move_ey && end.y + now_speed <= ground)start.y += now_speed;
+		else if (move_sy > move_ey && start.y - now_speed >= up_ground_boundary)start.y -= now_speed;
 		SetEdges();
 		return true;
 	}
 
-	if (move_sx < move_ex)
+	if (move_sx < move_ex && end.x + now_speed <= scr_width)
 	{
 		dir = dirs::right;
 		start.x += now_speed;
@@ -409,7 +414,7 @@ bool dll::EVILS::Move(float _where_x, float _where_y, float gear)
 		SetEdges();
 		return true;
 	}
-	else if (move_sx > move_ex)
+	else if (move_sx > move_ex && start.x - now_speed >= 0)
 	{
 		dir = dirs::left;
 		start.x -= now_speed;
@@ -417,6 +422,8 @@ bool dll::EVILS::Move(float _where_x, float _where_y, float gear)
 		SetEdges();
 		return true;
 	}
+
+	state = states::stand;
 
 	return false;
 }
