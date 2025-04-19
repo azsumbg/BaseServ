@@ -439,7 +439,7 @@ float dll::Distance(FPOINT my_point, FPOINT target)
 
 void dll::sort(BAG<FPOINT>& cont, FPOINT targ)
 {
-	if (cont.in_valid_state)
+	if (cont.is_valid())
 	{
 		bool is_ok = false;
 		while (!is_ok)
