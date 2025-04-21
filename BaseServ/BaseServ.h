@@ -169,6 +169,9 @@ namespace dll
 		FPOINT end{};
 		FPOINT center{};
 
+		float x_radius{ 0 };
+		float y_radius{ 0 };
+
 		PROTON(float _x, float _y, float _width, float _height);
 		PROTON();
 		virtual ~PROTON() {};

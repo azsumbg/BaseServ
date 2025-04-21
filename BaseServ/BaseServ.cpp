@@ -36,6 +36,9 @@ dll::PROTON::PROTON(float _x, float _y, float _width, float _height)
 
 	center.x = start.x + width / 2;
 	center.y = start.y + height / 2;
+
+	x_radius = width / 2;
+	y_radius = height / 2;
 }
 dll::PROTON::PROTON()
 {
@@ -50,6 +53,9 @@ dll::PROTON::PROTON()
 
 	center.x = start.x + width / 2;
 	center.y = start.y + height / 2;
+
+	x_radius = width / 2;
+	y_radius = height / 2;
 }
 void dll::PROTON::SetEdges()
 {
@@ -69,6 +75,9 @@ void dll::PROTON::NewDims(float _width, float _height)
 
 	center.x = start.x + width / 2;
 	center.y = start.y + height / 2;
+
+	x_radius = width / 2;
+	y_radius = height / 2;
 }
 void dll::PROTON::SetWidth(float _width)
 {
@@ -77,6 +86,8 @@ void dll::PROTON::SetWidth(float _width)
 	end.x = start.x + width;
 	
 	center.x = start.x + width / 2;
+
+	x_radius = width / 2;
 }
 void dll::PROTON::SetHeight(float _height)
 {
@@ -85,6 +96,8 @@ void dll::PROTON::SetHeight(float _height)
 	end.y = start.y + height;
 
 	center.y = start.y + height / 2;
+
+	y_radius = height / 2;
 }
 float dll::PROTON::GetWidth() const
 {
@@ -210,6 +223,10 @@ int dll::BASE::GetFrame()
 				frame_delay = 15;
 				break;
 
+			case states::run:
+				frame_delay = 15;
+				break;
+
 			case states::punch:
 				frame_delay = 3;
 				break;
@@ -261,6 +278,10 @@ void dll::BASE::ChangeState(states _to_what)
 		switch (state)
 		{
 		case states::stand:
+			max_frames = 5;
+			break;
+
+		case states::run:
 			max_frames = 5;
 			break;
 
