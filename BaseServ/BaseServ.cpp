@@ -265,6 +265,7 @@ int dll::BASE::GetFrame()
 		++frame;
 		if (frame > max_frames)frame = 0;
 	}
+
 	if (frame > max_frames)frame = 0;
 	return frame;
 }
@@ -324,6 +325,8 @@ bool dll::HERO::Move(float _where_x, float _where_y, float gear)
 	float now_speed = speed + gear / 10;
 
 	state = states::run;
+	max_frames = 5;
+	frame = 0;
 
 	SetPath(_where_x, _where_y);
 
