@@ -125,7 +125,7 @@ dll::BASE::BASE(unsigned char _what_type, float _put_x, float _put_y)
 		lifes = 100;
 		speed = 2.0f;
 		strenght = 20;
-		attack_chance = 3;
+		attack_chance = 30;
 		max_frames = 5;
 		frame_delay = 15;
 		break;
@@ -136,7 +136,7 @@ dll::BASE::BASE(unsigned char _what_type, float _put_x, float _put_y)
 		lifes = 100;
 		speed = 0.8f;
 		strenght = 10;
-		attack_chance = 5;
+		attack_chance = 50;
 		max_frames = 9;
 		frame_delay = 8;
 		break;
@@ -147,7 +147,7 @@ dll::BASE::BASE(unsigned char _what_type, float _put_x, float _put_y)
 		lifes = 80;
 		speed = 1.0f;
 		strenght = 8;
-		attack_chance = 6;
+		attack_chance = 60;
 		max_frames = 10;
 		frame_delay = 7;
 		break;
@@ -158,7 +158,7 @@ dll::BASE::BASE(unsigned char _what_type, float _put_x, float _put_y)
 		lifes = 150;
 		speed = 0.5f;
 		strenght = 15;
-		attack_chance = 8;
+		attack_chance = 80;
 		max_frames = 3;
 		frame_delay = 22;
 		break;
@@ -169,7 +169,7 @@ dll::BASE::BASE(unsigned char _what_type, float _put_x, float _put_y)
 		lifes = 180;
 		speed = 0.4f;
 		strenght = 18;
-		attack_chance = 9;
+		attack_chance = 90;
 		max_frames = 36;
 		frame_delay = 2;
 		break;
@@ -265,7 +265,7 @@ int dll::BASE::GetFrame()
 		++frame;
 		if (frame > max_frames)frame = 0;
 	}
-
+	if (frame > max_frames)frame = 0;
 	return frame;
 }
 void dll::BASE::ChangeState(states _to_what)
@@ -315,7 +315,7 @@ int dll::BASE::Attack()
 // HERO ***************************
 
 dll::HERO::HERO(float _where_x, float _where_y) :BASE(hero, _where_x, _where_y) {};
-void dll::HERO::NextMove(BAG<FPOINT> _targets, float gear)
+void dll::HERO::NextMove(BAG<FPOINT>& _targets, float gear)
 {
 	return;
 }
@@ -380,7 +380,7 @@ void dll::HERO::Release()
 // EVILS **************************
 
 dll::EVILS::EVILS(unsigned char _what, float _where_x, float _where_y) :BASE(_what, _where_x, _where_y) {};
-void dll::EVILS::NextMove(BAG<FPOINT> _targets, float gear)
+void dll::EVILS::NextMove(BAG<FPOINT>& _targets, float gear)
 {
 	sort(_targets, start);
 	
